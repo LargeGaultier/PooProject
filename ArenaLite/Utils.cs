@@ -24,9 +24,9 @@ static class Utils
     public static void PrintBattleLog()
     {
         Console.WriteLine("\n=== Journal de combat ===");
-        for (int i = 0; i < GameManager.BattleLog.Count; i++)
+        for (int i = 0; i < ArenaEngine.BattleLog.Count; i++)
         {
-            Console.WriteLine("  " + GameManager.BattleLog[i]);
+            Console.WriteLine("  " + ArenaEngine.BattleLog[i]);
         }
     }
 
@@ -49,6 +49,6 @@ static class Utils
 
     public static int RandomDamageVariation(int baseDamage, int range)
     {
-        return baseDamage + GameManager.Rng.Next(-range, range + 1);
+        return baseDamage + ArenaEngine.Rng.Next(-range, range + 1);
     }
 }

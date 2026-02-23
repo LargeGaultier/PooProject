@@ -1,5 +1,5 @@
 // Version pédagogique volontairement mal conçue (anti-patterns)
-class GameManager
+class ArenaEngine
 {
     public static Random Rng = new Random();
     public static List<string> BattleLog = new List<string>();
