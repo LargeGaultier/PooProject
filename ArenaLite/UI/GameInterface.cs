@@ -42,19 +42,9 @@ public class GameInterface
         Console.WriteLine($"  {atkName} attaque {defName} pour {damage} dégâts !{bonusText}");
     }
 
-    public void ShowFireSpecial(string atkName, string defName, int damage)
+    public void ShowSpecial(string message)
     {
-        Console.WriteLine($"  {atkName} lance Flamme Intense sur {defName} pour {damage} dégâts !");
-    }
-
-    public void ShowWaterSpecial(string atkName, int heal)
-    {
-        Console.WriteLine($"  {atkName} utilise Vague Curative et récupère {heal} HP !");
-    }
-
-    public void ShowGrassSpecial(string atkName, string defName)
-    {
-        Console.WriteLine($"  {atkName} empoisonne {defName} pour 3 tours !");
+        Console.WriteLine(message);
     }
 
     public void ShowPoison(string name, int turnsLeft)
@@ -74,7 +64,7 @@ public class GameInterface
         for (int i = 0; i < FighterType.All.Length; i++)
         {
             var ft = FighterType.All[i];
-            Console.WriteLine($"  {i + 1}) {ft.Name,-7} — Spécial = {ft.SpecialDescription}");
+            Console.WriteLine($"  {i + 1}) {ft.Name,-10} — Spécial = {ft.SpecialDescription}");
         }
         return ReadChoice($"  Ton choix (1-{FighterType.All.Length}) : ", 1, FighterType.All.Length);
     }

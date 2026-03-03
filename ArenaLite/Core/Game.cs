@@ -5,6 +5,7 @@ namespace ArenaLite.Core;
 
 /// <summary>
 /// Orchestre le déroulement du combat tour par tour.
+/// Ne connaît pas les types concrets de créatures (polymorphisme).
 /// </summary>
 public class Game
 {
@@ -37,13 +38,14 @@ public class Game
 
             if (choice == 1)
             {
-                int damage = rules.DoAttack(attacker, defender);
-                double mult = rules.GetTypeBonus(attacker.Type, defender.Type);
+                var (damage, mult) = rules.DoAttack(attacker, defender);
                 ui.ShowAttack(attacker.Name, defender.Name, damage, mult);
             }
             else
             {
-                ExecuteSpecial(attacker, defender);
+                // Appel polymorphique : chaque Fighter sait exécuter son propre spécial
+                string message = attacker.UseSpecial(defender);
+                ui.ShowSpecial(message);
             }
 
             // Poison en fin de tour
@@ -58,24 +60,5 @@ public class Game
 
         Fighter winner = fighter1.IsAlive ? fighter1 : fighter2;
         ui.ShowWinner(winner);
-    }
-
-    private void ExecuteSpecial(Fighter attacker, Fighter defender)
-    {
-        if (attacker.Type == FighterType.Fire)
-        {
-            int damage = rules.DoSpecialFire(attacker, defender);
-            ui.ShowFireSpecial(attacker.Name, defender.Name, damage);
-        }
-        else if (attacker.Type == FighterType.Water)
-        {
-            int heal = rules.DoSpecialWater(attacker);
-            ui.ShowWaterSpecial(attacker.Name, heal);
-        }
-        else // Grass
-        {
-            rules.DoSpecialGrass(defender);
-            ui.ShowGrassSpecial(attacker.Name, defender.Name);
-        }
     }
 }

@@ -1,4 +1,5 @@
 using ArenaLite.Models;
+using ArenaLite.Models.Fighters;
 using ArenaLite.Core;
 using ArenaLite.UI;
 
@@ -29,5 +30,13 @@ Fighter ChooseFighter()
     int choice = ui.AskFighterType();
     FighterType type = FighterType.All[choice - 1];
     string name = ui.AskFighterName(type.Name);
-    return new Fighter(name, type);
+
+    return choice switch
+    {
+        1 => new FireFighter(name),
+        2 => new WaterFighter(name),
+        3 => new GrassFighter(name),
+        4 => new ElectricFighter(name),
+        _ => throw new InvalidOperationException("Type inconnu")
+    };
 }
