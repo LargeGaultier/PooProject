@@ -1,18 +1,14 @@
-using ArenaLite.Models;
-
-namespace ArenaLite.Core;
+namespace ArenaLite.Models;
 
 /// <summary>
-/// Règles métier communes du combat : attaque normale, poison, bonus de type.
-/// Les spéciaux sont gérés par chaque sous-classe de Fighter (polymorphisme).
+/// MVC Model — Règles métier communes du combat.
+/// Aucune dépendance vers la console, la vue ou les observers.
 /// </summary>
 public class GameRules
 {
     private readonly Random rng = new();
 
     public const int PoisonDamagePerTurn = 8;
-
-    // ---------- Attaque normale ----------
 
     public (int damage, double multiplier) DoAttack(Fighter attacker, Fighter defender)
     {
@@ -23,8 +19,6 @@ public class GameRules
         defender.TakeDamage(damage);
         return (damage, mult);
     }
-
-    // ---------- Poison ----------
 
     public bool ApplyPoison(Fighter fighter)
     {

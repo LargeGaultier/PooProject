@@ -1,37 +1,60 @@
 using ArenaLite.Models;
-using ArenaLite.Models.Fighters;
-using ArenaLite.Core;
+using ArenaLite.Controllers;
+using ArenaLite.Views;
+using ArenaLite.Observers;
 using ArenaLite.Logging;
-using ArenaLite.UI;
 
 // ============================================================
-// ArenaLite — Point d'entrée
-// Assemblage des dépendances et lancement du jeu
+// ArenaLite — Composition root
+// Assemble les dépendances, branche les patterns, lance le jeu
 // ============================================================
 
 Console.WriteLine("=== ARENA LITE — Combat au tour par tour ===\n");
 
-// --- 1. Choix du mode de log ---
+// --- 1. Singleton : initialisation du logger ---
 ILogger logger = ChooseLogger();
+LoggerProvider.Initialize(logger);
 
-// --- 2. Assemblage des dépendances ---
-GameInterface ui = new GameInterface(logger);
-GameRules rules = new GameRules();
+// --- 2. View + Factory ---
+GameView view = new GameView();
+FighterFactory factory = new FighterFactory();
 
-// --- 3. Choix des créatures (interactif) ---
+// --- 3. Choix des créatures (via Factory) ---
 Console.WriteLine();
-ui.ShowPlayerPrompt(1);
+view.ShowPlayerPrompt(1);
 Fighter fighter1 = ChooseFighter();
 
 Console.WriteLine();
-ui.ShowPlayerPrompt(2);
+view.ShowPlayerPrompt(2);
 Fighter fighter2 = ChooseFighter();
 
-// --- 4. Lancement du combat ---
-Game game = new Game(fighter1, fighter2, rules, ui);
-game.Run();
+// --- 4. Controller + Observers ---
+GameRules rules = new GameRules();
+GameController controller = new GameController(fighter1, fighter2, rules, view);
+
+CombatLogger combatLogger = new CombatLogger();
+ScoreTracker scoreTracker = new ScoreTracker();
+BattleHistory history = new BattleHistory();
+
+controller.AddObserver(combatLogger);
+controller.AddObserver(scoreTracker);
+controller.AddObserver(history);
+
+// --- 5. Lancement ---
+controller.Run();
+
+// --- 6. Post-combat ---
+scoreTracker.PrintSummary();
 
 // =================== FONCTIONS ===================
+
+Fighter ChooseFighter()
+{
+    int choice = view.AskFighterType();
+    FighterType type = FighterType.All[choice - 1];
+    string name = view.AskFighterName(type.Name);
+    return factory.Create(type, name);
+}
 
 ILogger ChooseLogger()
 {
@@ -56,22 +79,6 @@ ILogger CreateFileLogger()
     string? path = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(path)) path = "combat.log";
     return new FileLogger(path);
-}
-
-Fighter ChooseFighter()
-{
-    int choice = ui.AskFighterType();
-    FighterType type = FighterType.All[choice - 1];
-    string name = ui.AskFighterName(type.Name);
-
-    return choice switch
-    {
-        1 => new FireFighter(name),
-        2 => new WaterFighter(name),
-        3 => new GrassFighter(name),
-        4 => new ElectricFighter(name),
-        _ => throw new InvalidOperationException("Type inconnu")
-    };
 }
 
 int ReadChoice(string prompt, int min, int max)
