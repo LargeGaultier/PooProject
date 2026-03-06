@@ -1,58 +1,66 @@
+using ArenaLite.Logging;
 using ArenaLite.Models;
 
 namespace ArenaLite.UI;
 
 /// <summary>
-/// Gère toute l'interaction console (affichage et saisie).
+/// Gère l'interaction avec l'utilisateur.
+/// Les prompts interactifs utilisent Console (toujours visibles).
+/// Les messages de combat passent par le logger (configurable).
 /// </summary>
 public class GameInterface
 {
-    // ---------- Écrans ----------
+    private readonly ILogger logger;
 
-    public void ShowWelcome()
+    public GameInterface(ILogger logger)
     {
-        Console.WriteLine("=== ARENA LITE — Combat au tour par tour ===\n");
+        this.logger = logger;
     }
+
+    // ========== Messages de combat (via ILogger) ==========
 
     public void ShowFightStart(Fighter f1, Fighter f2)
     {
-        Console.WriteLine($"\n>> {f1.Name} ({f1.Type.Name}) VS {f2.Name} ({f2.Type.Name}) — FIGHT!\n");
+        logger.Log($"\n>> {f1.Name} ({f1.Type.Name}) VS {f2.Name} ({f2.Type.Name}) — FIGHT!\n");
     }
 
     public void ShowTurnHeader(string attackerName)
     {
-        Console.WriteLine($"-- Tour de {attackerName} --");
+        logger.Log($"-- Tour de {attackerName} --");
     }
-
-    public void ShowStatus(Fighter f1, Fighter f2)
-    {
-        Console.WriteLine($"  [ {f1.Name}: {f1.Hp}/{f1.MaxHp} HP | {f2.Name}: {f2.Hp}/{f2.MaxHp} HP ]\n");
-    }
-
-    public void ShowWinner(Fighter winner)
-    {
-        Console.WriteLine($"\n*** {winner.Name} remporte le combat ! ***");
-    }
-
-    // ---------- Messages de combat ----------
 
     public void ShowAttack(string atkName, string defName, int damage, double mult)
     {
         string bonusText = mult > 1.0 ? " (super efficace!)" : mult < 1.0 ? " (pas très efficace...)" : "";
-        Console.WriteLine($"  {atkName} attaque {defName} pour {damage} dégâts !{bonusText}");
+        logger.Log($"  {atkName} attaque {defName} pour {damage} dégâts !{bonusText}");
     }
 
     public void ShowSpecial(string message)
     {
-        Console.WriteLine(message);
+        logger.Log(message);
     }
 
     public void ShowPoison(string name, int turnsLeft)
     {
-        Console.WriteLine($"  [Poison] {name} perd 8 HP ! ({turnsLeft} tours restants)");
+        logger.Log($"  [Poison] {name} perd 8 HP ! ({turnsLeft} tours restants)");
     }
 
-    // ---------- Saisie utilisateur ----------
+    public void ShowStatus(Fighter f1, Fighter f2)
+    {
+        logger.Log($"  [ {f1.Name}: {f1.Hp}/{f1.MaxHp} HP | {f2.Name}: {f2.Hp}/{f2.MaxHp} HP ]\n");
+    }
+
+    public void ShowWinner(Fighter winner)
+    {
+        logger.Log($"\n*** {winner.Name} remporte le combat ! ***");
+    }
+
+    // ========== Prompts interactifs (toujours Console) ==========
+
+    public void ShowPlayerPrompt(int playerNumber)
+    {
+        Console.WriteLine($"--- Joueur {playerNumber}, choisis ta créature ---");
+    }
 
     public int AskAction()
     {
@@ -75,11 +83,6 @@ public class GameInterface
         string name = Console.ReadLine() ?? defaultName;
         if (string.IsNullOrWhiteSpace(name)) name = defaultName;
         return name;
-    }
-
-    public void ShowPlayerPrompt(int playerNumber)
-    {
-        Console.WriteLine($"--- Joueur {playerNumber}, choisis ta créature ---");
     }
 
     private int ReadChoice(string prompt, int min, int max)
