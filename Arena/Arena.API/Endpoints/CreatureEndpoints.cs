@@ -1,5 +1,5 @@
 using Arena.Application.DTOs;
-using Arena.Application.Services;
+using Arena.Application.UseCases.Creatures;
 using Arena.Domain;
 
 namespace Arena.API.Endpoints;
@@ -8,23 +8,23 @@ public static class CreatureEndpoints
 {
     public static void MapCreatureEndpoints(this WebApplication app)
     {
-        app.MapGet("/creatures", async (CreatureAppService service) =>
+        app.MapGet("/creatures", async (GetAllCreatures useCase) =>
         {
-            var creatures = await service.GetAllAsync();
+            var creatures = await useCase.ExecuteAsync();
             return Results.Ok(creatures);
         });
 
-        app.MapGet("/creatures/{id:guid}", async (Guid id, CreatureAppService service) =>
+        app.MapGet("/creatures/{id:guid}", async (Guid id, GetCreatureById useCase) =>
         {
-            var creature = await service.GetByIdAsync(id);
+            var creature = await useCase.ExecuteAsync(id);
             return creature is not null ? Results.Ok(creature) : Results.NotFound();
         });
 
-        app.MapPost("/creatures", async (CreateCreatureRequest request, CreatureAppService service) =>
+        app.MapPost("/creatures", async (CreateCreatureRequest request, CreateCreature useCase) =>
         {
             try
             {
-                var created = await service.CreateAsync(request);
+                var created = await useCase.ExecuteAsync(request);
                 return Results.Created($"/creatures/{created.Id}", created);
             }
             catch (Exception ex) when (ex is ArgumentException or DomainException)
@@ -33,9 +33,9 @@ public static class CreatureEndpoints
             }
         });
 
-        app.MapDelete("/creatures/{id:guid}", async (Guid id, CreatureAppService service) =>
+        app.MapDelete("/creatures/{id:guid}", async (Guid id, DeleteCreature useCase) =>
         {
-            var deleted = await service.DeleteAsync(id);
+            var deleted = await useCase.ExecuteAsync(id);
             return deleted ? Results.NoContent() : Results.NotFound();
         });
     }

@@ -1,3 +1,5 @@
+using Arena.Domain.Entities;
+
 namespace Arena.Application.DTOs;
 
 public record CreateCreatureRequest(
@@ -17,4 +19,8 @@ public record CreatureResponse(
     int Attack,
     int Defense,
     string SpecialPower
-);
+)
+{
+    public static CreatureResponse FromDomain(Creature c) =>
+        new(c.Id, c.Name, c.Type.ToString(), c.MaxHp, c.Attack, c.Defense, c.SpecialPower);
+};

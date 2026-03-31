@@ -1,5 +1,6 @@
 using Arena.API.Endpoints;
-using Arena.Application.Services;
+using Arena.Application.UseCases.Battles;
+using Arena.Application.UseCases.Creatures;
 using Arena.Domain.Repositories;
 using Arena.Infrastructure;
 using Arena.Infrastructure.Repositories;
@@ -18,9 +19,14 @@ builder.Services.AddScoped<IBattleRepository, EfBattleRepository>();
 // builder.Services.AddSingleton<ICreatureRepository, InMemoryCreatureRepository>();
 // builder.Services.AddSingleton<IBattleRepository, InMemoryBattleRepository>();
 
-// --- Services applicatifs ---
-builder.Services.AddScoped<CreatureAppService>();
-builder.Services.AddScoped<BattleAppService>();
+// --- Use Cases ---
+builder.Services.AddScoped<GetAllCreatures>();
+builder.Services.AddScoped<GetCreatureById>();
+builder.Services.AddScoped<CreateCreature>();
+builder.Services.AddScoped<DeleteCreature>();
+builder.Services.AddScoped<GetAllBattles>();
+builder.Services.AddScoped<GetBattleById>();
+builder.Services.AddScoped<StartBattle>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
