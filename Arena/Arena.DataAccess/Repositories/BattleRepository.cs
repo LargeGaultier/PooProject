@@ -12,24 +12,9 @@ public class BattleRepository
         _context = context;
     }
 
-    public async Task<List<BattleEntity>> GetAllAsync()
+    public IQueryable<BattleEntity> Query()
     {
-        return await _context.Battles
-            .Include(b => b.Creature1)
-            .Include(b => b.Creature2)
-            .Include(b => b.Winner)
-            .Include(b => b.Logs.OrderBy(l => l.Turn))
-            .ToListAsync();
-    }
-
-    public async Task<BattleEntity?> GetByIdAsync(Guid id)
-    {
-        return await _context.Battles
-            .Include(b => b.Creature1)
-            .Include(b => b.Creature2)
-            .Include(b => b.Winner)
-            .Include(b => b.Logs.OrderBy(l => l.Turn))
-            .FirstOrDefaultAsync(b => b.Id == id);
+        return _context.Battles.AsQueryable();
     }
 
     public async Task<BattleEntity> AddAsync(BattleEntity battle)

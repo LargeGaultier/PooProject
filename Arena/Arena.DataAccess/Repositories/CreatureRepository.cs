@@ -12,9 +12,9 @@ public class CreatureRepository
         _context = context;
     }
 
-    public async Task<List<CreatureEntity>> GetAllAsync()
+    public IQueryable<CreatureEntity> Query()
     {
-        return await _context.Creatures.ToListAsync();
+        return _context.Creatures.AsQueryable();
     }
 
     public async Task<CreatureEntity?> GetByIdAsync(Guid id)

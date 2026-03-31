@@ -1,6 +1,7 @@
 using Arena.Business.DTOs;
 using Arena.DataAccess.Entities;
 using Arena.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Arena.Business;
 
@@ -15,14 +16,17 @@ public class CreatureService
 
     public async Task<List<CreatureResponse>> GetAllAsync()
     {
-        var entities = await _creatureRepository.GetAllAsync();
-        return entities.Select(ToDto).ToList();
+        return await _creatureRepository.Query()
+            .Select(CreatureResponse.Projection)
+            .ToListAsync();
     }
 
     public async Task<CreatureResponse?> GetByIdAsync(Guid id)
     {
-        var entity = await _creatureRepository.GetByIdAsync(id);
-        return entity is null ? null : ToDto(entity);
+        return await _creatureRepository.Query()
+            .Where(c => c.Id == id)
+            .Select(CreatureResponse.Projection)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<CreatureResponse> CreateAsync(CreateCreatureRequest request)
@@ -54,20 +58,15 @@ public class CreatureService
         };
 
         var created = await _creatureRepository.AddAsync(entity);
-        return ToDto(created);
+
+        return await _creatureRepository.Query()
+            .Where(c => c.Id == created.Id)
+            .Select(CreatureResponse.Projection)
+            .FirstAsync();
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
         return await _creatureRepository.DeleteAsync(id);
-    }
-
-    internal static CreatureResponse ToDto(CreatureEntity entity)
-    {
-        return new CreatureResponse(
-            entity.Id, entity.Name, entity.Type,
-            entity.MaxHp, entity.Attack, entity.Defense,
-            entity.SpecialPower
-        );
     }
 }

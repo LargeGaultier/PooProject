@@ -1,6 +1,7 @@
 using Arena.Business.DTOs;
 using Arena.DataAccess.Entities;
 using Arena.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Arena.Business;
 
@@ -17,14 +18,17 @@ public class BattleService
 
     public async Task<List<BattleResponse>> GetAllAsync()
     {
-        var entities = await _battleRepository.GetAllAsync();
-        return entities.Select(ToDto).ToList();
+        return await _battleRepository.Query()
+            .Select(BattleResponse.Projection)
+            .ToListAsync();
     }
 
     public async Task<BattleResponse?> GetByIdAsync(Guid id)
     {
-        var entity = await _battleRepository.GetByIdAsync(id);
-        return entity is null ? null : ToDto(entity);
+        return await _battleRepository.Query()
+            .Where(b => b.Id == id)
+            .Select(BattleResponse.Projection)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<BattleResponse> StartBattleAsync(Guid creature1Id, Guid creature2Id)
@@ -96,23 +100,9 @@ public class BattleService
 
         var saved = await _battleRepository.AddAsync(battle);
 
-        // Recharger avec les navigation properties
-        var full = await _battleRepository.GetByIdAsync(saved.Id);
-        return ToDto(full!);
-    }
-
-    private static BattleResponse ToDto(BattleEntity entity)
-    {
-        return new BattleResponse(
-            entity.Id,
-            entity.Creature1Id,
-            entity.Creature2Id,
-            entity.WinnerId,
-            entity.PlayedAt,
-            CreatureService.ToDto(entity.Creature1),
-            CreatureService.ToDto(entity.Creature2),
-            entity.Winner is null ? null : CreatureService.ToDto(entity.Winner),
-            entity.Logs.Select(l => new BattleLogResponse(l.Id, l.Turn, l.Description)).ToList()
-        );
+        return await _battleRepository.Query()
+            .Where(b => b.Id == saved.Id)
+            .Select(BattleResponse.Projection)
+            .FirstAsync();
     }
 }
