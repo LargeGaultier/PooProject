@@ -1,10 +1,10 @@
-namespace Arena.DataAccess.Entities;
+namespace Arena.Infrastructure.Models;
 
-public class CreatureEntity
+public class CreatureDbModel
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty; // Tank, Healer, Attacker
+    public string Type { get; set; } = string.Empty;
     public int MaxHp { get; set; }
     public int Attack { get; set; }
     public int Defense { get; set; }

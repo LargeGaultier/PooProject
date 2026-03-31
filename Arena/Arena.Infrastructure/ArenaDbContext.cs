@@ -1,13 +1,13 @@
-using Arena.DataAccess.Entities;
+using Arena.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Arena.DataAccess;
+namespace Arena.Infrastructure;
 
 public class ArenaDbContext : DbContext
 {
-    public DbSet<CreatureEntity> Creatures => Set<CreatureEntity>();
-    public DbSet<BattleEntity> Battles => Set<BattleEntity>();
-    public DbSet<BattleLogEntity> BattleLogs => Set<BattleLogEntity>();
+    public DbSet<CreatureDbModel> Creatures => Set<CreatureDbModel>();
+    public DbSet<BattleDbModel> Battles => Set<BattleDbModel>();
+    public DbSet<BattleLogDbModel> BattleLogs => Set<BattleLogDbModel>();
 
     public ArenaDbContext(DbContextOptions<ArenaDbContext> options) : base(options)
     {
@@ -15,7 +15,7 @@ public class ArenaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BattleEntity>(entity =>
+        modelBuilder.Entity<BattleDbModel>(entity =>
         {
             entity.HasOne(b => b.Creature1)
                 .WithMany()

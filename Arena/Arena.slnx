@@ -1,5 +1,6 @@
 <Solution>
+  <Project Path="Arena.Domain/Arena.Domain.csproj" />
+  <Project Path="Arena.Application/Arena.Application.csproj" />
+  <Project Path="Arena.Infrastructure/Arena.Infrastructure.csproj" />
   <Project Path="Arena.API/Arena.API.csproj" />
-  <Project Path="Arena.Business/Arena.Business.csproj" />
-  <Project Path="Arena.DataAccess/Arena.DataAccess.csproj" />
 </Solution>

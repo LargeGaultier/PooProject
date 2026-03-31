@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\Arena.Business\Arena.Business.csproj" />
+    <ProjectReference Include="..\Arena.Application\Arena.Application.csproj" />
+    <ProjectReference Include="..\Arena.Infrastructure\Arena.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,4 @@
-using System.Linq.Expressions;
-using Arena.DataAccess.Entities;
-
-namespace Arena.Business.DTOs;
+namespace Arena.Application.DTOs;
 
 public record CreateCreatureRequest(
     string Name,
@@ -20,8 +17,4 @@ public record CreatureResponse(
     int Attack,
     int Defense,
     string SpecialPower
-)
-{
-    public static Expression<Func<CreatureEntity, CreatureResponse>> Projection =>
-        e => new CreatureResponse(e.Id, e.Name, e.Type, e.MaxHp, e.Attack, e.Defense, e.SpecialPower);
-}
+);

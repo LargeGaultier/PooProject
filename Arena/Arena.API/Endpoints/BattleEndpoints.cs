@@ -1,5 +1,5 @@
-using Arena.Business;
-using Arena.Business.DTOs;
+using Arena.Application.DTOs;
+using Arena.Application.Services;
 
 namespace Arena.API.Endpoints;
 
@@ -7,19 +7,19 @@ public static class BattleEndpoints
 {
     public static void MapBattleEndpoints(this WebApplication app)
     {
-        app.MapGet("/battles", async (BattleService service) =>
+        app.MapGet("/battles", async (BattleAppService service) =>
         {
             var battles = await service.GetAllAsync();
             return Results.Ok(battles);
         });
 
-        app.MapGet("/battles/{id:guid}", async (Guid id, BattleService service) =>
+        app.MapGet("/battles/{id:guid}", async (Guid id, BattleAppService service) =>
         {
             var battle = await service.GetByIdAsync(id);
             return battle is not null ? Results.Ok(battle) : Results.NotFound();
         });
 
-        app.MapPost("/battles", async (StartBattleRequest request, BattleService service) =>
+        app.MapPost("/battles", async (StartBattleRequest request, BattleAppService service) =>
         {
             try
             {

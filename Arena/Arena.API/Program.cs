@@ -1,7 +1,8 @@
 using Arena.API.Endpoints;
-using Arena.Business;
-using Arena.DataAccess;
-using Arena.DataAccess.Repositories;
+using Arena.Application.Services;
+using Arena.Domain.Repositories;
+using Arena.Infrastructure;
+using Arena.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,10 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ArenaDbContext>(options =>
     options.UseSqlite("Data Source=arena.db"));
 
-builder.Services.AddScoped<CreatureRepository>();
-builder.Services.AddScoped<BattleRepository>();
-builder.Services.AddScoped<CreatureService>();
-builder.Services.AddScoped<BattleService>();
+// --- Repositories : interface → implémentation concrète ---
+// Pour basculer en InMemory, commenter les 2 lignes ci-dessous et décommenter les 2 suivantes.
+builder.Services.AddScoped<ICreatureRepository, EfCreatureRepository>();
+builder.Services.AddScoped<IBattleRepository, EfBattleRepository>();
+// builder.Services.AddSingleton<ICreatureRepository, InMemoryCreatureRepository>();
+// builder.Services.AddSingleton<IBattleRepository, InMemoryBattleRepository>();
+
+// --- Services applicatifs ---
+builder.Services.AddScoped<CreatureAppService>();
+builder.Services.AddScoped<BattleAppService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
